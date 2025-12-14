@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEGO LEAKS 2026 - Cloud Live</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --bg-body: #000000;
+            --bg-card: rgba(28, 28, 30, 0.65);
+            --bg-card-hover: rgba(44, 44, 46, 0.85);
+            --bg-modal-default: rgba(28, 28, 30, 0.6); 
+            --input-bg: rgba(118, 118, 128, 0.24);
+            --text-primary: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent: #0A84FF; 
+            --danger: #FF453A;   
+            --warning: #FFD60A;  
+            --success: #32D74B;  
+            --border: rgba(255, 255, 255, 0.1);
+            --blur: 30px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 40px 20px 100px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        header { max-width: 1200px; margin: 0 auto 30px auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .title-wrapper { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 8px; }
+        .main-logo { height: 60px; width: auto; object-fit: contain; }
+        h1 { font-weight: 700; font-size: 3rem; letter-spacing: -0.01em; margin: 0; background: linear-gradient(180deg, #fff 0%, #b0b0b0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; }
+        p.subtitle { color: var(--text-secondary); font-size: 1.1rem; font-weight: 400; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .radar-icon { width: 24px; height: 24px; fill: var(--accent); opacity: 0.9; animation: radar-spin 8s linear infinite; }
+        @keyframes radar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* CONTROLS */
+        .controls-row { max-width: 700px; margin: 0 auto 40px auto; display: flex; gap: 15px; align-items: center; }
+        .search-wrapper { flex-grow: 1; position: relative; }
+        .search-input { width: 100%; padding: 12px 20px 12px 45px; background: rgba(118, 118, 128, 0.15); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; color: white; font-size: 1rem; backdrop-filter: blur(10px); transition: all 0.3s ease; box-sizing: border-box; font-family: inherit; }
+        .search-input:focus { outline: none; background: rgba(118, 118, 128, 0.3); border-color: var(--accent); box-shadow: 0 0 20px rgba(10, 132, 255, 0.2); }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: var(--text-secondary); pointer-events: none; transition: fill 0.3s; }
+        .search-input:focus + .search-icon { fill: var(--accent); }
+        .sort-select { width: 180px; padding: 12px 35px 12px 15px; appearance: none; background: rgba(118, 118, 128, 0.15) url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2386868b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 12px top 50%; background-size: 10px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; color: white; font-size: 0.95rem; font-family: inherit; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; }
+        .sort-select:focus { outline: none; border-color: var(--accent); background-color: rgba(118, 118, 128, 0.3); }
+
+        /* NAV */
+        .nav-container { display: flex; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; gap: 10px; }
+        .segmented-control { background: rgba(118, 118, 128, 0.24); padding: 4px; border-radius: 100px; display: inline-flex; backdrop-filter: blur(10px); flex-wrap: wrap; justify-content: center; }
+        button.nav-btn { background: transparent; border: none; color: var(--text-secondary); padding: 8px 20px; font-size: 0.9rem; font-weight: 500; cursor: pointer; border-radius: 100px; transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); white-space: nowrap; }
+        button.nav-btn:hover { color: var(--text-primary); }
+        button.nav-btn.active { background: rgba(99, 99, 102, 0.6); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
+
+        /* CARD */
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 22px; padding: 24px; padding-top: 45px; backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease; position: relative; cursor: pointer; display: flex; flex-direction: column; min-height: 180px; }
+        .card:hover { transform: scale(1.02); background: var(--bg-card-hover); border-color: rgba(255,255,255,0.2); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .theme-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
+        .prob-bombs { font-size: 0.9rem; letter-spacing: 2px; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
+        .high { color: var(--success); } .medium { color: var(--warning); } .low { color: var(--danger); }
+        .card h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 8px 0; line-height: 1.2; color: var(--text-primary); }
+        .desc { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+        .card-footer { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; margin-top: auto; }
+        .price { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); }
+        .source { font-size: 0.65rem; color: var(--text-secondary); opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 400; transition: opacity 0.3s; }
+        .card:hover .source { opacity: 0.7; }
+        .countdown { font-size: 0.75rem; font-weight: 700; color: var(--accent); background: rgba(10, 132, 255, 0.15); padding: 3px 8px; border-radius: 6px; margin-left: 10px; display: inline-block; }
+        .countdown.released { color: var(--text-secondary); background: rgba(255,255,255,0.1); }
+
+        /* MAC CONTROLS */
+        .mac-controls { position: absolute; top: 15px; left: 15px; display: flex; gap: 8px; z-index: 20; }
+        .mac-dot { width: 13px; height: 13px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; font-size: 9px; color: rgba(0,0,0,0.5); font-weight: 800; }
+        .mac-dot:hover { color: rgba(0,0,0,0.7); }
+        .mac-dot span { opacity: 0; transition: opacity 0.2s; }
+        .card:hover .mac-dot span { opacity: 1; }
+        .mac-red { background-color: #FF5F57; border: 1px solid #E0443E; }
+        .mac-yellow { background-color: #FEBC2E; border: 1px solid #D89E24; }
+        .mac-green { background-color: #28C840; border: 1px solid #1AAB29; }
+        .mac-red:active, .mac-yellow:active, .mac-green:active { transform: scale(0.9); }
+
+        /* FAB & LOADER */
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 300; transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); z-index: 900; }
+        .fab:hover { background: rgba(255, 255, 255, 0.2); color: #fff; transform: scale(1.05) rotate(90deg); border-color: rgba(255, 255, 255, 0.4); }
+        
+        #db-status { position: fixed; bottom: 30px; left: 30px; color: #555; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; z-index: 1000; }
+        .spinner { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { to {transform: rotate(360deg);} }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal { background: var(--bg-modal-default); width: 90%; max-width: 600px; max-height: 85vh; border-radius: 24px; padding: 40px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: scale(0.92); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), background-color 0.3s ease; overflow-y: auto; position: relative; backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px); }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: rgba(118, 118, 128, 0.2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: background 0.2s; }
+        .modal-close:hover { background: rgba(118, 118, 128, 0.5); }
+        .modal-header { margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .modal-title { font-size: 2.2rem; font-weight: 700; margin: 15px 0; color: #fff; letter-spacing: -0.02em; line-height: 1.1; }
+        .modal-meta-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .meta-badge { font-size: 0.85rem; font-weight: 500; padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.1); color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+        .meta-badge.price-badge { background: rgba(255, 255, 255, 0.15); color: #fff; font-weight: 600; }
+        .modal-body { font-size: 1.05rem; line-height: 1.7; color: #e0e0e0; }
+        .news-section-title { color: var(--accent); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; font-weight: 700; margin-top: 25px; margin-bottom: 8px; opacity: 0.9; }
+        .modal-body strong { color: #fff; font-weight: 600; }
+        .modal-body ul { padding-left: 20px; margin: 10px 0; }
+        .modal-body li { margin-bottom: 5px; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .form-input, .form-select, .form-textarea { width: 100%; box-sizing: border-box; background: var(--input-bg); border: 1px solid transparent; border-radius: 12px; padding: 12px; color: white; font-size: 1rem; font-family: inherit; transition: border-color 0.2s; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent); }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        .btn-submit { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 14px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+        .btn-submit:hover { background: #0071e3; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="title-wrapper">
+            <img src="logo.png" alt="Leaks Logo" class="main-logo" onerror="this.style.display='none'">
+            <h1>Leaks 2026</h1>
+        </div>
+        <p class="subtitle">
+            <svg class="radar-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12.5 7V12.25L17 14.92L16.25 16.15L11 13V7H12.5Z" opacity="0.5"/>
+                <circle cx="12" cy="12" r="2" />
+                <path d="M7.75735 7.75736C8.88263 6.63208 10.3816 6 12 6V4C9.79086 4 7.69573 4.87786 6.14213 6.43146L7.75735 7.75736Z" />
+                <path d="M4.92893 4.92893C6.80457 3.0533 9.34784 2 12 2V4C9.87827 4 7.84344 4.82411 6.34314 6.34315L4.92893 4.92893Z" opacity="0.5"/>
+            </svg>
+            Unofficial Lego® Intelligence Radar
+        </p>
+    </header>
+
+    <div class="controls-row">
+        <div class="search-wrapper">
+            <input type="text" id="search-box" class="search-input" placeholder="Search leaks, themes or codes..." onkeyup="handleSearch()">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+        </div>
+        
+        <select id="sort-select" class="sort-select" onchange="handleSort()">
+            <option value="reliability">Sort: Reliability</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="date">Release Date</option>
+            <option value="name">Name (A-Z)</option>
+        </select>
+    </div>
+
+    <div class="nav-container">
+        <div class="segmented-control">
+            <button class="nav-btn active" onclick="filterLeaks('all')">All</button>
+            <button class="nav-btn" onclick="filterLeaks('Star Wars')">Star Wars</button>
+            <button class="nav-btn" onclick="filterLeaks('Technic')">Technic</button>
+            <button class="nav-btn" onclick="filterLeaks('Gaming')">Gaming</button>
+            <button class="nav-btn" onclick="filterLeaks('Harry Potter')">Harry Potter</button>
+            <button class="nav-btn" onclick="filterLeaks('Icons')">Icons</button>
+            <button class="nav-btn" onclick="filterLeaks('New Themes')">New Themes</button>
+        </div>
+    </div>
+
+    <div id="dashboard" class="grid"></div>
+    
+    <div id="db-status"><div class="spinner" id="spinner"></div> <span id="status-text">Connecting...</span></div>
+
+    <button class="fab" onclick="openAddModal()" title="Add New Leak">+</button>
+
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal" id="modal-box">
+            <button class="modal-close" onclick="closeModalDirect()">×</button>
+            <div class="modal-header">
+                <span class="theme-tag" id="m-theme">THEME</span>
+                <h2 class="modal-title" id="m-title">Title</h2>
+                
+                <div class="modal-meta-row">
+                    <div class="meta-badge price-badge" id="m-price">Price</div>
+                    <div class="meta-badge" id="m-date">Date</div>
+                    <div class="meta-badge" id="m-prob">Reliability</div>
+                </div>
+                <div class="modal-meta-row" style="margin-top: 10px; opacity: 0.6;">
+                    <small id="m-source">SOURCE</small>
+                </div>
+
+            </div>
+            <div class="modal-body" id="m-body"></div>
+        </div>
+    </div>
+
+    <div id="add-modal-overlay" class="modal-overlay" onclick="closeAddModal(event)">
+        <div class="modal" id="add-modal-box" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeAddModalDirect()">×</button>
+            <h2 id="modal-title-action" style="margin-top:0; margin-bottom:20px;">Add New Leak</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Theme</label>
+                <select id="inp-theme" class="form-select">
+                    <option value="Star Wars">Star Wars</option>
+                    <option value="Technic">Technic</option>
+                    <option value="Gaming">Gaming</option>
+                    <option value="Harry Potter">Harry Potter</option>
+                    <option value="Icons">Icons</option>
+                    <option value="New Themes">New Themes</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Set Name</label>
+                <input type="text" id="inp-name" class="form-input" placeholder="Ex: Death Star Ultimate">
+            </div>
+
+            <div class="form-row" style="display:flex; gap:15px;">
+                <div class="form-group" style="flex:1">
+                    <label class="form-label">Price</label>
+                    <input type="text" id="inp-price" class="form-input" placeholder="€99.99">
+                </div>
+                <div class="form-group" style="flex:1">
+                    <label class="form-label">Release Date</label>
+                    <input type="date" id="inp-date" class="form-input">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Reliability</label>
+                <select id="inp-prob" class="form-select">
+                    <option value="High">High (💣💣💣)</option>
+                    <option value="Medium">Medium (💣💣)</option>
+                    <option value="Low">Low (💣)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Source</label>
+                <input type="text" id="inp-source" class="form-input" placeholder="Ex: Reddit, StoneWars">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Short Description</label>
+                <input type="text" id="inp-desc" class="form-input" placeholder="Brief summary for the card...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Full Details</label>
+                <textarea id="inp-full" class="form-textarea" placeholder="Use *bold* for highlights and ► for sections"></textarea>
+            </div>
+
+            <button class="btn-submit" onclick="handleSave()">Save Leak</button>
+        </div>
+    </div>
+
+    <script>
+        // --- SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = 'https://uquhnaypjozrapjbbwtk.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxdWhuYXlwam96cmFwamJid3RrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3MzIwNDgsImV4cCI6MjA4MTMwODA0OH0.lyM2PlAiTsuC_wgzP543J8N9hp83mQw4JxnR9fMnETI';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let leaks = [];
+        let currentFilter = 'all';
+        let searchTerm = "";
+        let currentSort = "reliability";
+        let editingId = null;
+
+        const themeColors = { "Star Wars": "#FFE81F", "Technic": "#FF6B00", "Harry Potter": "#740001", "Gaming": "#E60012", "Icons": "#BF5AF2", "New Themes": "#30D158", "Default": "#0A84FF", "Other": "#86868b" };
+        const reliabilityMap = { "High": 3, "Medium": 2, "Low": 1 };
+
+        const dashboard = document.getElementById('dashboard');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const addModalOverlay = document.getElementById('add-modal-overlay');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const themeSelect = document.getElementById('inp-theme');
+        const addModalBox = document.getElementById('add-modal-box');
+        const spinner = document.getElementById('spinner');
+        const statusText = document.getElementById('status-text');
+
+        // --- DATABASE FUNCTIONS ---
+
+        function showLoading(msg) {
+            spinner.style.display = 'block';
+            statusText.innerText = msg;
+        }
+        function hideLoading() {
+            spinner.style.display = 'none';
+            statusText.innerText = 'Cloud Synced';
+            setTimeout(() => { statusText.innerText = ''; }, 2000);
+        }
+
+        // FETCH (READ)
+        async function fetchLeaks() {
+            showLoading('Fetching leaks...');
+            const { data, error } = await supabase.from('leaks').select('*');
+            if (error) {
+                console.error('Error fetching leaks:', error);
+                statusText.innerText = 'Error fetching data';
+            } else {
+                leaks = data.map(item => ({
+                    id: item.id,
+                    theme: item.theme,
+                    name: item.name,
+                    price: item.price,
+                    prob: item.prob,
+                    source: item.source,
+                    desc: item.desc,
+                    fullNews: item.full_news,
+                    date: item.release_date
+                }));
+                hideLoading();
+                render(currentFilter);
+            }
+        }
+
+        // CREATE
+        async function createLeak(newLeak) {
+            showLoading('Saving...');
+            const { error } = await supabase.from('leaks').insert([{
+                theme: newLeak.theme,
+                name: newLeak.name,
+                price: newLeak.price,
+                prob: newLeak.prob,
+                source: newLeak.source,
+                "desc": newLeak.desc,
+                full_news: newLeak.fullNews,
+                release_date: newLeak.date || null
+            }]);
+            if(error) alert("Error saving: " + error.message);
+            else await fetchLeaks();
+        }
+
+        // UPDATE
+        async function updateLeak(id, updatedData) {
+            showLoading('Updating...');
+            const { error } = await supabase.from('leaks').update({
+                theme: updatedData.theme,
+                name: updatedData.name,
+                price: updatedData.price,
+                prob: updatedData.prob,
+                source: updatedData.source,
+                "desc": updatedData.desc,
+                full_news: updatedData.fullNews,
+                release_date: updatedData.date || null
+            }).eq('id', id);
+            if(error) alert("Error updating: " + error.message);
+            else await fetchLeaks();
+        }
+
+        // DELETE
+        async function deleteLeak(id, event) {
+            event.stopPropagation();
+            if(confirm("Sei sicuro di voler eliminare questo Leak dal Cloud?")) {
+                showLoading('Deleting...');
+                const { error } = await supabase.from('leaks').delete().eq('id', id);
+                if(error) alert("Error deleting: " + error.message);
+                else await fetchLeaks();
+            }
+        }
+
+        // --- APP LOGIC ---
+
+        function handleSave() {
+            const name = document.getElementById('inp-name').value;
+            if(!name) { alert("Inserisci almeno il nome del set!"); return; }
+
+            const formData = {
+                theme: document.getElementById('inp-theme').value,
+                name: name,
+                price: document.getElementById('inp-price').value || "TBA",
+                prob: document.getElementById('inp-prob').value,
+                source: document.getElementById('inp-source').value || "Community",
+                desc: document.getElementById('inp-desc').value,
+                fullNews: document.getElementById('inp-full').value,
+                date: document.getElementById('inp-date').value
+            };
+
+            closeAddModalDirect();
+
+            if (editingId) {
+                updateLeak(editingId, formData);
+            } else {
+                createLeak(formData);
+            }
+        }
+
+        // --- HELPERS ---
+        
+        function hexToRgba(hex, alpha) {
+            hex = hex.replace('#', '');
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        function getBombs(prob) { return prob === 'High' ? '💣💣💣' : (prob === 'Medium' ? '💣💣' : '💣'); }
+        function getThemeColor(t) { return themeColors[t] || themeColors["Default"]; }
+
+        // --- IMPROVED TEXT FORMATTER (FIXED) ---
+        function formatText(text) {
+            if(!text) return "";
+            
+            // 1. Trim start/end (removes initial \n)
+            let html = text.trim();
+            
+            // 2. Replace literal "\n" (backslash+n) with <br>
+            // This fixes the issue with DB text containing explicit \n characters
+            html = html.replace(/\\n/g, '<br>');
+            
+            // 3. Replace actual newline characters with <br>
+            html = html.replace(/\n/g, '<br>');
+            
+            // 4. Clean up any double breaks at the start if they persist
+            html = html.replace(/^(<br>)+/, '');
+
+            // 5. Format Bold (**text**)
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // 6. Format Sections (► Text:)
+            html = html.replace(/►\s*(.*?):/g, '<div class="news-section-title">$1</div>');
+            
+            return html;
+        }
+
+        function getCountdown(dateStr) {
+            if (!dateStr) return "";
+            const target = new Date(dateStr);
+            const today = new Date();
+            const diff = target - today;
+            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            if (days < 0) return `<span class="countdown released">Released</span>`;
+            if (days === 0) return `<span class="countdown">Today!</span>`;
+            return `<span class="countdown">-${days} days</span>`;
+        }
+
+        function handleSearch() {
+            searchTerm = document.getElementById('search-box').value.toLowerCase();
+            render(currentFilter);
+        }
+
+        function handleSort() {
+            currentSort = document.getElementById('sort-select').value;
+            render(currentFilter);
+        }
+
+        function parsePrice(priceStr) {
+            if(!priceStr || priceStr === "TBA") return -1; 
+            let clean = priceStr.replace(/[^0-9.]/g, '');
+            return parseFloat(clean) || 0;
+        }
+
+        function render(filter) {
+            dashboard.innerHTML = '';
+            let sortedLeaks = [...leaks];
+
+            if (filter !== 'all') {
+                sortedLeaks = sortedLeaks.filter(i => 
+                    filter === 'Icons' ? (i.theme === 'Icons' || i.theme === 'Architecture') : i.theme === filter
+                );
+            }
+
+            if (searchTerm) {
+                sortedLeaks = sortedLeaks.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm) || 
+                    item.desc.toLowerCase().includes(searchTerm) ||
+                    String(item.id).includes(searchTerm) ||
+                    item.theme.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            sortedLeaks.sort((a, b) => {
+                switch(currentSort) {
+                    case 'price-asc':
+                        let pA = parsePrice(a.price);
+                        let pB = parsePrice(b.price);
+                        if(pA === -1) return 1; if(pB === -1) return -1;
+                        return pA - pB;
+                    case 'price-desc':
+                        let pAd = parsePrice(a.price);
+                        let pBd = parsePrice(b.price);
+                        if(pAd === -1) return 1; if(pBd === -1) return -1;
+                        return pBd - pAd;
+                    case 'date':
+                        if(!a.date) return 1; if(!b.date) return -1;
+                        return new Date(a.date) - new Date(b.date);
+                    case 'name': return a.name.localeCompare(b.name);
+                    case 'reliability':
+                    default: return reliabilityMap[b.prob] - reliabilityMap[a.prob];
+                }
+            });
+
+            if (sortedLeaks.length === 0) {
+                dashboard.innerHTML = '<p style="text-align:center; width:100%; grid-column:1/-1; opacity:0.5; margin-top:20px; color: #86868b; font-size: 1.1rem;">No leaks found matching your criteria.</p>';
+                return;
+            }
+
+            sortedLeaks.forEach((item, index) => {
+                let probClass = item.prob.toLowerCase();
+                let tColor = getThemeColor(item.theme);
+                let tagStyle = `color: ${tColor}; background: ${tColor}20; border: 1px solid ${tColor}40;`;
+                let countdownHtml = getCountdown(item.date);
+
+                let card = document.createElement('div');
+                card.className = 'card';
+                card.style.animationDelay = `${index * 50}ms`; 
+                card.onclick = () => openModal(item.id); 
+
+                card.innerHTML = `
+                    <div class="mac-controls">
+                        <div class="mac-dot mac-red" onclick="deleteLeak('${item.id}', event)" title="Delete"><span>×</span></div>
+                        <div class="mac-dot mac-yellow" onclick="openEditModal('${item.id}', event)" title="Edit"><span>−</span></div>
+                        <div class="mac-dot mac-green" title="Expand"><span>+</span></div>
+                    </div>
+                    <div class="card-header">
+                        <span class="theme-tag" style="${tagStyle}">${item.theme}</span>
+                        <div class="prob-bombs ${probClass}">${getBombs(item.prob)}</div>
+                    </div>
+                    <h2>${item.name}</h2>
+                    <p class="desc">${item.desc}</p>
+                    <div class="card-footer">
+                        <div>
+                            <span class="price">${item.price}</span>
+                            ${countdownHtml}
+                        </div>
+                        <span class="source">${item.source}</span>
+                    </div>
+                `;
+                dashboard.appendChild(card);
+            });
+        }
+
+        function filterLeaks(category) {
+            currentFilter = category;
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            render(category);
+        }
+
+        function openModal(id) {
+            const item = leaks.find(i => i.id == id);
+            if(!item) return;
+            let tColor = getThemeColor(item.theme);
+            // UPDATED: Transparency to 0.08 (8%)
+            document.getElementById('modal-box').style.background = hexToRgba(tColor, 0.08);
+            
+            const tagEl = document.getElementById('m-theme');
+            tagEl.innerText = item.theme;
+            tagEl.style.cssText = `color: ${tColor}; background: ${tColor}20; border: 1px solid ${tColor}40;`;
+            
+            document.getElementById('m-title').innerText = item.name;
+            document.getElementById('m-price').innerText = item.price;
+            document.getElementById('m-source').innerText = "Source: " + item.source;
+            document.getElementById('m-date').innerText = item.date ? "Release: " + item.date : "Date: TBA";
+            
+            document.getElementById('m-body').innerHTML = formatText(item.fullNews);
+            
+            const probEl = document.getElementById('m-prob');
+            probEl.innerText = getBombs(item.prob);
+            probEl.className = 'meta-badge prob-bombs ' + item.prob.toLowerCase();
+            
+            modalOverlay.classList.add('active');
+        }
+
+        themeSelect.addEventListener('change', (e) => {
+            let tColor = getThemeColor(e.target.value);
+            // UPDATED: Transparency to 0.08 (8%)
+            addModalBox.style.background = hexToRgba(tColor, 0.08);
+        });
+
+        function openAddModal() { 
+            editingId = null; 
+            document.getElementById('modal-title-action').innerText = "Add New Leak";
+            document.getElementById('inp-name').value = "";
+            document.getElementById('inp-price').value = "";
+            document.getElementById('inp-date').value = "";
+            document.getElementById('inp-source').value = "";
+            document.getElementById('inp-desc').value = "";
+            document.getElementById('inp-full').value = "";
+            document.getElementById('inp-theme').value = "Star Wars";
+            document.getElementById('inp-prob').value = "High";
+
+            let tColor = getThemeColor("Star Wars");
+            // UPDATED: Transparency to 0.08 (8%)
+            addModalBox.style.background = hexToRgba(tColor, 0.08);
+            addModalOverlay.classList.add('active'); 
+        }
+
+        function openEditModal(id, event) {
+            event.stopPropagation();
+            editingId = id; 
+            const item = leaks.find(l => l.id == id);
+            
+            document.getElementById('modal-title-action').innerText = "Edit Leak";
+            document.getElementById('inp-name').value = item.name;
+            document.getElementById('inp-price').value = item.price;
+            document.getElementById('inp-date').value = item.date || "";
+            document.getElementById('inp-source').value = item.source;
+            document.getElementById('inp-desc').value = item.desc;
+            document.getElementById('inp-full').value = item.fullNews;
+            document.getElementById('inp-theme').value = item.theme;
+            document.getElementById('inp-prob').value = item.prob;
+
+            let tColor = getThemeColor(item.theme);
+            // UPDATED: Transparency to 0.08 (8%)
+            addModalBox.style.background = hexToRgba(tColor, 0.08);
+            addModalOverlay.classList.add('active'); 
+        }
+
+        function closeAddModal(e) { if (e.target === addModalOverlay) addModalOverlay.classList.remove('active'); }
+        function closeAddModalDirect() { addModalOverlay.classList.remove('active'); }
+        function closeModal(e) { if (e.target === modalOverlay) modalOverlay.classList.remove('active'); }
+        function closeModalDirect() { modalOverlay.classList.remove('active'); }
+
+        // Start App
+        fetchLeaks();
+    </script>
+</body>
+</html>
