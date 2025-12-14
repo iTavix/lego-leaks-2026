@@ -9,23 +9,28 @@
     <style>
         /* --- 1. LIGHT MODE (DEFAULT) --- */
         :root {
-            --bg-body: #F2F2F7; /* Apple System Gray 6 (Light) */
+            --bg-body: #F2F2F7; 
             --bg-card: rgba(255, 255, 255, 0.7);
             --bg-card-hover: rgba(255, 255, 255, 0.95);
             --bg-modal-default: rgba(242, 242, 247, 0.85); 
             --input-bg: rgba(118, 118, 128, 0.12);
             --text-primary: #000000;
             --text-secondary: #3C3C43;
-            --border: rgba(60, 60, 67, 0.1); /* Leggero bordo scuro per light mode */
+            --border: rgba(60, 60, 67, 0.1); 
             
-            --accent: #007AFF; /* Apple Blue Light */
+            --accent: #007AFF; 
             --danger: #FF3B30;   
             --warning: #FFCC00;  
             --success: #34C759;  
             --blur: 20px;
             
-            /* Shadow più morbide per light mode */
             --shadow-card: 0 4px 20px rgba(0,0,0,0.05);
+            
+            /* Colori specifici per il logo in Light Mode */
+            --logo-base-fill: rgba(255, 255, 255, 0.4); /* Frosted Glass Light */
+            --logo-stud-color: #007AFF;
+            --logo-radar-color: #007AFF;
+            --logo-border: rgba(0, 0, 0, 0.1);
         }
 
         /* --- 2. DARK MODE (AUTO DETECT) --- */
@@ -40,12 +45,18 @@
                 --text-secondary: #86868B;
                 --border: rgba(255, 255, 255, 0.1);
                 
-                --accent: #0A84FF; /* Apple Blue Dark */
+                --accent: #0A84FF; 
                 --danger: #FF453A;   
                 --warning: #FFD60A;  
                 --success: #32D74B; 
                 
                 --shadow-card: 0 10px 30px rgba(0,0,0,0.3);
+                
+                /* Colori specifici per il logo in Dark Mode */
+                --logo-base-fill: rgba(255, 255, 255, 0.05); /* Frosted Glass Dark */
+                --logo-stud-color: #0A84FF;
+                --logo-radar-color: #0A84FF;
+                --logo-border: rgba(255, 255, 255, 0.1);
             }
         }
 
@@ -62,12 +73,29 @@
         /* HEADER */
         header { max-width: 1200px; margin: 0 auto 30px auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
         .title-wrapper { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 8px; }
-        .main-logo { height: 60px; width: auto; object-fit: contain; }
+        
+        /* Logo SVG Styling */
+        .main-logo { 
+            height: 60px; width: 60px; 
+            /* Bagliore dinamico basato sul colore d'accento */
+            filter: drop-shadow(0 0 10px var(--logo-radar-color)); 
+            transition: transform 0.3s ease;
+        }
+        .main-logo:hover { transform: scale(1.05) rotate(0deg); } /* Removed rotation */
+
+        /* Radar Animation */
+        @keyframes radar-sweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .radar-sweep-path {
+            transform-origin: 50% 50%;
+            animation: radar-sweep 4s linear infinite;
+        }
         
         /* Titolo adattivo per Light/Dark */
         h1 { 
             font-weight: 700; font-size: 3rem; letter-spacing: -0.01em; margin: 0; 
-            /* Gradiente adattivo: Scuro in light mode, Chiaro in dark mode */
             background: var(--text-primary); 
             background: linear-gradient(180deg, var(--text-primary) 0%, var(--text-secondary) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;
@@ -77,7 +105,7 @@
         .radar-icon { width: 24px; height: 24px; fill: var(--accent); opacity: 0.9; animation: radar-spin 8s linear infinite; }
         @keyframes radar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* CONTROLS */
+        /* CONTROLS (Resto del codice CSS invariato per brevità...) */
         .controls-row { max-width: 700px; margin: 0 auto 40px auto; display: flex; gap: 15px; align-items: center; }
         .search-wrapper { flex-grow: 1; position: relative; }
         .search-input { width: 100%; padding: 12px 20px 12px 45px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary); font-size: 1rem; backdrop-filter: blur(10px); transition: all 0.3s ease; box-sizing: border-box; font-family: inherit; }
@@ -202,7 +230,48 @@
 
     <header>
         <div class="title-wrapper">
-            <img src="logo.png" alt="Leaks Logo" class="main-logo" onerror="this.style.display='none'">
+            <svg class="main-logo" width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="studGloss" cx="0.5" cy="0.5" r="0.5" fx="0.7" fy="0.3">
+                        <stop offset="0%" stop-color="white" stop-opacity="0.8"/>
+                        <stop offset="100%" stop-color="var(--logo-stud-color)" stop-opacity="0.9"/>
+                    </radialGradient>
+                    <filter id="glassBlur">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
+                        <feComponentTransfer>
+                            <feFuncA type="linear" slope="0.5"/>
+                        </feComponentTransfer>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <g filter="url(#glassBlur)">
+                    <g transform="scale(0.9) translate(5, 5)">
+                        <path d="M50 10 L85 30 L50 50 L15 30 Z" fill="var(--logo-base-fill)" stroke="var(--logo-border)" stroke-width="2"/>
+                        <path d="M15 30 L15 70 L50 90 L50 50 Z" fill="var(--logo-base-fill)" stroke="var(--logo-border)" stroke-width="1.5"/>
+                        <path d="M50 50 L50 90 L85 70 L85 30 Z" fill="var(--logo-base-fill)" stroke="var(--logo-border)" stroke-width="1.5"/>
+                    </g>
+                    
+                    <g transform="scale(0.9) translate(5, 5)">
+                        <circle cx="32" cy="22" r="6" fill="url(#studGloss)" stroke="var(--logo-border)" stroke-width="1"/>
+                        <circle cx="68" cy="22" r="6" fill="url(#studGloss)" stroke="var(--logo-border)" stroke-width="1"/>
+                        <circle cx="32" cy="38" r="6" fill="url(#studGloss)" stroke="var(--logo-border)" stroke-width="1"/>
+                        <circle cx="68" cy="38" r="6" fill="url(#studGloss)" stroke="var(--logo-border)" stroke-width="1"/>
+                    </g>
+
+                    <g transform="translate(0, -10)">
+                        <path class="radar-sweep-path" 
+                              d="M 50 50 L 50 10 A 40 40 0 0 1 55 15 L 50 50 Z" 
+                              fill="var(--logo-radar-color)" fill-opacity="0.3" 
+                              stroke="var(--logo-radar-color)" stroke-width="1"
+                              transform-origin="50px 50px"/>
+                    </g>
+                    
+                </g>
+            </svg>
             <h1>Leaks 2026</h1>
         </div>
         <p class="subtitle">
@@ -614,7 +683,6 @@
             const item = leaks.find(i => i.id == id);
             if(!item) return;
             let tColor = getThemeColor(item.theme);
-            // Updated transparency to 0.08 (8%)
             document.getElementById('modal-box').style.background = hexToRgba(tColor, 0.08);
             
             const tagEl = document.getElementById('m-theme');
