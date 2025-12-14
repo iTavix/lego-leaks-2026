@@ -2,25 +2,51 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEGO LEAKS 2026 - Cloud Live</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LEGO LEAKS 2026 - Universal</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
+        /* --- 1. LIGHT MODE (DEFAULT) --- */
         :root {
-            --bg-body: #000000;
-            --bg-card: rgba(28, 28, 30, 0.65);
-            --bg-card-hover: rgba(44, 44, 46, 0.85);
-            --bg-modal-default: rgba(28, 28, 30, 0.6); 
-            --input-bg: rgba(118, 118, 128, 0.24);
-            --text-primary: #f5f5f7;
-            --text-secondary: #86868b;
-            --accent: #0A84FF; 
-            --danger: #FF453A;   
-            --warning: #FFD60A;  
-            --success: #32D74B;  
-            --border: rgba(255, 255, 255, 0.1);
-            --blur: 30px;
+            --bg-body: #F2F2F7; /* Apple System Gray 6 (Light) */
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-hover: rgba(255, 255, 255, 0.95);
+            --bg-modal-default: rgba(242, 242, 247, 0.85); 
+            --input-bg: rgba(118, 118, 128, 0.12);
+            --text-primary: #000000;
+            --text-secondary: #3C3C43;
+            --border: rgba(60, 60, 67, 0.1); /* Leggero bordo scuro per light mode */
+            
+            --accent: #007AFF; /* Apple Blue Light */
+            --danger: #FF3B30;   
+            --warning: #FFCC00;  
+            --success: #34C759;  
+            --blur: 20px;
+            
+            /* Shadow più morbide per light mode */
+            --shadow-card: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- 2. DARK MODE (AUTO DETECT) --- */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-body: #000000;
+                --bg-card: rgba(28, 28, 30, 0.65);
+                --bg-card-hover: rgba(44, 44, 46, 0.85);
+                --bg-modal-default: rgba(28, 28, 30, 0.6); 
+                --input-bg: rgba(118, 118, 128, 0.24);
+                --text-primary: #F5F5F7;
+                --text-secondary: #86868B;
+                --border: rgba(255, 255, 255, 0.1);
+                
+                --accent: #0A84FF; /* Apple Blue Dark */
+                --danger: #FF453A;   
+                --warning: #FFD60A;  
+                --success: #32D74B; 
+                
+                --shadow-card: 0 10px 30px rgba(0,0,0,0.3);
+            }
         }
 
         body {
@@ -30,13 +56,23 @@
             margin: 0;
             padding: 40px 20px 100px 20px;
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* HEADER */
         header { max-width: 1200px; margin: 0 auto 30px auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
         .title-wrapper { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 8px; }
         .main-logo { height: 60px; width: auto; object-fit: contain; }
-        h1 { font-weight: 700; font-size: 3rem; letter-spacing: -0.01em; margin: 0; background: linear-gradient(180deg, #fff 0%, #b0b0b0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; }
+        
+        /* Titolo adattivo per Light/Dark */
+        h1 { 
+            font-weight: 700; font-size: 3rem; letter-spacing: -0.01em; margin: 0; 
+            /* Gradiente adattivo: Scuro in light mode, Chiaro in dark mode */
+            background: var(--text-primary); 
+            background: linear-gradient(180deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;
+        }
+        
         p.subtitle { color: var(--text-secondary); font-size: 1.1rem; font-weight: 400; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .radar-icon { width: 24px; height: 24px; fill: var(--accent); opacity: 0.9; animation: radar-spin 8s linear infinite; }
         @keyframes radar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -44,37 +80,50 @@
         /* CONTROLS */
         .controls-row { max-width: 700px; margin: 0 auto 40px auto; display: flex; gap: 15px; align-items: center; }
         .search-wrapper { flex-grow: 1; position: relative; }
-        .search-input { width: 100%; padding: 12px 20px 12px 45px; background: rgba(118, 118, 128, 0.15); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; color: white; font-size: 1rem; backdrop-filter: blur(10px); transition: all 0.3s ease; box-sizing: border-box; font-family: inherit; }
-        .search-input:focus { outline: none; background: rgba(118, 118, 128, 0.3); border-color: var(--accent); box-shadow: 0 0 20px rgba(10, 132, 255, 0.2); }
+        .search-input { width: 100%; padding: 12px 20px 12px 45px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary); font-size: 1rem; backdrop-filter: blur(10px); transition: all 0.3s ease; box-sizing: border-box; font-family: inherit; }
+        .search-input:focus { outline: none; background: rgba(118, 118, 128, 0.15); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.1); }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: var(--text-secondary); pointer-events: none; transition: fill 0.3s; }
         .search-input:focus + .search-icon { fill: var(--accent); }
-        .sort-select { width: 180px; padding: 12px 35px 12px 15px; appearance: none; background: rgba(118, 118, 128, 0.15) url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2386868b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 12px top 50%; background-size: 10px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; color: white; font-size: 0.95rem; font-family: inherit; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; }
-        .sort-select:focus { outline: none; border-color: var(--accent); background-color: rgba(118, 118, 128, 0.3); }
+        
+        .sort-select { 
+            width: 180px; padding: 12px 35px 12px 15px; appearance: none; 
+            background: var(--input-bg) url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2386868b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 12px top 50%; 
+            background-size: 10px; border: 1px solid var(--border); border-radius: 14px; 
+            color: var(--text-primary); font-size: 0.95rem; font-family: inherit; cursor: pointer; 
+            backdrop-filter: blur(10px); transition: all 0.3s ease; 
+        }
+        .sort-select:focus { outline: none; border-color: var(--accent); }
 
         /* NAV */
         .nav-container { display: flex; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; gap: 10px; }
-        .segmented-control { background: rgba(118, 118, 128, 0.24); padding: 4px; border-radius: 100px; display: inline-flex; backdrop-filter: blur(10px); flex-wrap: wrap; justify-content: center; }
+        .segmented-control { background: var(--input-bg); padding: 4px; border-radius: 100px; display: inline-flex; backdrop-filter: blur(10px); flex-wrap: wrap; justify-content: center; }
         button.nav-btn { background: transparent; border: none; color: var(--text-secondary); padding: 8px 20px; font-size: 0.9rem; font-weight: 500; cursor: pointer; border-radius: 100px; transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); white-space: nowrap; }
         button.nav-btn:hover { color: var(--text-primary); }
-        button.nav-btn.active { background: rgba(99, 99, 102, 0.6); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        button.nav-btn.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
 
         /* CARD */
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 22px; padding: 24px; padding-top: 45px; backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease; position: relative; cursor: pointer; display: flex; flex-direction: column; min-height: 180px; }
-        .card:hover { transform: scale(1.02); background: var(--bg-card-hover); border-color: rgba(255,255,255,0.2); }
+        .card { 
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 22px; padding: 24px; padding-top: 45px; 
+            backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease; 
+            position: relative; cursor: pointer; display: flex; flex-direction: column; min-height: 180px; 
+            box-shadow: var(--shadow-card);
+        }
+        .card:hover { transform: scale(1.02); background: var(--bg-card-hover); border-color: var(--accent); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .theme-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
-        .prob-bombs { font-size: 0.9rem; letter-spacing: 2px; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
+        .prob-bombs { font-size: 0.9rem; letter-spacing: 2px; filter: drop-shadow(0 0 5px rgba(0,0,0,0.2)); }
         .high { color: var(--success); } .medium { color: var(--warning); } .low { color: var(--danger); }
         .card h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 8px 0; line-height: 1.2; color: var(--text-primary); }
         .desc { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
-        .card-footer { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; margin-top: auto; }
+        .card-footer { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid var(--border); padding-top: 15px; margin-top: auto; }
         .price { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); }
-        .source { font-size: 0.65rem; color: var(--text-secondary); opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 400; transition: opacity 0.3s; }
-        .card:hover .source { opacity: 0.7; }
+        .source { font-size: 0.65rem; color: var(--text-secondary); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; transition: opacity 0.3s; }
+        .card:hover .source { opacity: 0.9; }
         .countdown { font-size: 0.75rem; font-weight: 700; color: var(--accent); background: rgba(10, 132, 255, 0.15); padding: 3px 8px; border-radius: 6px; margin-left: 10px; display: inline-block; }
-        .countdown.released { color: var(--text-secondary); background: rgba(255,255,255,0.1); }
+        .countdown.released { color: var(--text-secondary); background: var(--input-bg); }
 
         /* MAC CONTROLS */
         .mac-controls { position: absolute; top: 15px; left: 15px; display: flex; gap: 8px; z-index: 20; }
@@ -88,39 +137,65 @@
         .mac-red:active, .mac-yellow:active, .mac-green:active { transform: scale(0.9); }
 
         /* FAB & LOADER */
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 300; transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); z-index: 900; }
-        .fab:hover { background: rgba(255, 255, 255, 0.2); color: #fff; transform: scale(1.05) rotate(90deg); border-color: rgba(255, 255, 255, 0.4); }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--bg-card); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--accent); box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 300; transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); z-index: 900; }
+        .fab:hover { background: var(--accent); color: white; transform: scale(1.05) rotate(90deg); border-color: transparent; }
         
-        #db-status { position: fixed; bottom: 30px; left: 30px; color: #555; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; z-index: 1000; }
-        .spinner { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+        #db-status { position: fixed; bottom: 30px; left: 30px; color: var(--text-secondary); font-size: 0.8rem; display: flex; align-items: center; gap: 8px; z-index: 1000; }
+        .spinner { width: 12px; height: 12px; border: 2px solid var(--text-secondary); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { to {transform: rotate(360deg);} }
 
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal { background: var(--bg-modal-default); width: 90%; max-width: 600px; max-height: 85vh; border-radius: 24px; padding: 40px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: scale(0.92); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), background-color 0.3s ease; overflow-y: auto; position: relative; backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px); }
+        .modal { background: var(--bg-modal-default); width: 90%; max-width: 600px; max-height: 85vh; border-radius: 24px; padding: 40px; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.3); transform: scale(0.92); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), background-color 0.3s ease; overflow-y: auto; position: relative; backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px); }
         .modal-overlay.active .modal { transform: scale(1); }
-        .modal-close { position: absolute; top: 20px; right: 20px; background: rgba(118, 118, 128, 0.2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: background 0.2s; }
-        .modal-close:hover { background: rgba(118, 118, 128, 0.5); }
-        .modal-header { margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
-        .modal-title { font-size: 2.2rem; font-weight: 700; margin: 15px 0; color: #fff; letter-spacing: -0.02em; line-height: 1.1; }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: var(--input-bg); border: none; color: var(--text-secondary); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: background 0.2s; }
+        .modal-close:hover { background: var(--border); color: var(--text-primary); }
+        .modal-header { margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .modal-title { font-size: 2.2rem; font-weight: 700; margin: 15px 0; color: var(--text-primary); letter-spacing: -0.02em; line-height: 1.1; }
         .modal-meta-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .meta-badge { font-size: 0.85rem; font-weight: 500; padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.1); color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
-        .meta-badge.price-badge { background: rgba(255, 255, 255, 0.15); color: #fff; font-weight: 600; }
-        .modal-body { font-size: 1.05rem; line-height: 1.7; color: #e0e0e0; }
+        .meta-badge { font-size: 0.85rem; font-weight: 500; padding: 6px 12px; border-radius: 8px; background: var(--input-bg); color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+        .meta-badge.price-badge { background: var(--accent); color: #fff; font-weight: 600; }
+        .modal-body { font-size: 1.05rem; line-height: 1.7; color: var(--text-primary); }
         .news-section-title { color: var(--accent); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; font-weight: 700; margin-top: 25px; margin-bottom: 8px; opacity: 0.9; }
-        .modal-body strong { color: #fff; font-weight: 600; }
+        .modal-body strong { color: var(--text-primary); font-weight: 600; }
         .modal-body ul { padding-left: 20px; margin: 10px 0; }
         .modal-body li { margin-bottom: 5px; }
 
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .form-input, .form-select, .form-textarea { width: 100%; box-sizing: border-box; background: var(--input-bg); border: 1px solid transparent; border-radius: 12px; padding: 12px; color: white; font-size: 1rem; font-family: inherit; transition: border-color 0.2s; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        .form-input, .form-select, .form-textarea { width: 100%; box-sizing: border-box; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: var(--text-primary); font-size: 1rem; font-family: inherit; transition: border-color 0.2s; }
+        /* Fix calendario in light/dark mode */
+        @media (prefers-color-scheme: light) { input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0); } }
+        @media (prefers-color-scheme: dark) { input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); } }
+        
         .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent); }
         .form-textarea { min-height: 100px; resize: vertical; }
         .btn-submit { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 14px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-        .btn-submit:hover { background: #0071e3; }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 768px) {
+            body { padding: 20px 15px 100px 15px; }
+            h1 { font-size: 2.2rem; }
+            .subtitle { font-size: 0.9rem; }
+            
+            .controls-row { flex-direction: column; gap: 10px; margin-bottom: 25px; }
+            .search-wrapper, .sort-select { width: 100%; }
+            .grid { grid-template-columns: 1fr; gap: 15px; }
+            
+            .card { padding: 20px; padding-top: 40px; min-height: auto; }
+            .card h2 { font-size: 1.25rem; }
+            
+            .modal { width: 95%; padding: 25px; max-height: 90vh; }
+            .modal-title { font-size: 1.6rem; }
+            .modal-body { font-size: 1rem; }
+            
+            .fab { width: 56px; height: 56px; bottom: 20px; right: 20px; font-size: 2rem; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card { animation: fadeIn 0.5s ease forwards; }
     </style>
 </head>
 <body>
@@ -200,7 +275,7 @@
     <div id="add-modal-overlay" class="modal-overlay" onclick="closeAddModal(event)">
         <div class="modal" id="add-modal-box" style="max-width: 500px;">
             <button class="modal-close" onclick="closeAddModalDirect()">×</button>
-            <h2 id="modal-title-action" style="margin-top:0; margin-bottom:20px;">Add New Leak</h2>
+            <h2 id="modal-title-action" style="margin-top:0; margin-bottom:20px; color: var(--text-primary);">Add New Leak</h2>
             
             <div class="form-group">
                 <label class="form-label">Theme</label>
@@ -404,29 +479,20 @@
         function getBombs(prob) { return prob === 'High' ? '💣💣💣' : (prob === 'Medium' ? '💣💣' : '💣'); }
         function getThemeColor(t) { return themeColors[t] || themeColors["Default"]; }
 
-        // --- IMPROVED TEXT FORMATTER (FIXED) ---
+        // --- IMPROVED TEXT FORMATTER ---
         function formatText(text) {
             if(!text) return "";
-            
-            // 1. Trim start/end (removes initial \n)
+            // 1. Trim whitespace/newlines
             let html = text.trim();
-            
-            // 2. Replace literal "\n" (backslash+n) with <br>
-            // This fixes the issue with DB text containing explicit \n characters
+            // 2. Fix explicit literal "\n" chars
             html = html.replace(/\\n/g, '<br>');
-            
-            // 3. Replace actual newline characters with <br>
+            // 3. Fix actual newlines
             html = html.replace(/\n/g, '<br>');
-            
-            // 4. Clean up any double breaks at the start if they persist
+            // 4. Remove leading breaks
             html = html.replace(/^(<br>)+/, '');
-
-            // 5. Format Bold (**text**)
+            // 5. Styles
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // 6. Format Sections (► Text:)
             html = html.replace(/►\s*(.*?):/g, '<div class="news-section-title">$1</div>');
-            
             return html;
         }
 
@@ -498,14 +564,14 @@
             });
 
             if (sortedLeaks.length === 0) {
-                dashboard.innerHTML = '<p style="text-align:center; width:100%; grid-column:1/-1; opacity:0.5; margin-top:20px; color: #86868b; font-size: 1.1rem;">No leaks found matching your criteria.</p>';
+                dashboard.innerHTML = '<p style="text-align:center; width:100%; grid-column:1/-1; opacity:0.5; margin-top:20px; color: var(--text-secondary); font-size: 1.1rem;">No leaks found matching your criteria.</p>';
                 return;
             }
 
             sortedLeaks.forEach((item, index) => {
                 let probClass = item.prob.toLowerCase();
                 let tColor = getThemeColor(item.theme);
-                let tagStyle = `color: ${tColor}; background: ${tColor}20; border: 1px solid ${tColor}40;`;
+                let tagStyle = `color: ${tColor}; background: ${hexToRgba(tColor, 0.15)}; border: 1px solid ${hexToRgba(tColor, 0.3)};`;
                 let countdownHtml = getCountdown(item.date);
 
                 let card = document.createElement('div');
@@ -548,12 +614,12 @@
             const item = leaks.find(i => i.id == id);
             if(!item) return;
             let tColor = getThemeColor(item.theme);
-            // UPDATED: Transparency to 0.08 (8%)
+            // Updated transparency to 0.08 (8%)
             document.getElementById('modal-box').style.background = hexToRgba(tColor, 0.08);
             
             const tagEl = document.getElementById('m-theme');
             tagEl.innerText = item.theme;
-            tagEl.style.cssText = `color: ${tColor}; background: ${tColor}20; border: 1px solid ${tColor}40;`;
+            tagEl.style.cssText = `color: ${tColor}; background: ${hexToRgba(tColor, 0.15)}; border: 1px solid ${hexToRgba(tColor, 0.3)};`;
             
             document.getElementById('m-title').innerText = item.name;
             document.getElementById('m-price').innerText = item.price;
@@ -571,7 +637,6 @@
 
         themeSelect.addEventListener('change', (e) => {
             let tColor = getThemeColor(e.target.value);
-            // UPDATED: Transparency to 0.08 (8%)
             addModalBox.style.background = hexToRgba(tColor, 0.08);
         });
 
@@ -588,7 +653,6 @@
             document.getElementById('inp-prob').value = "High";
 
             let tColor = getThemeColor("Star Wars");
-            // UPDATED: Transparency to 0.08 (8%)
             addModalBox.style.background = hexToRgba(tColor, 0.08);
             addModalOverlay.classList.add('active'); 
         }
@@ -609,7 +673,6 @@
             document.getElementById('inp-prob').value = item.prob;
 
             let tColor = getThemeColor(item.theme);
-            // UPDATED: Transparency to 0.08 (8%)
             addModalBox.style.background = hexToRgba(tColor, 0.08);
             addModalOverlay.classList.add('active'); 
         }
