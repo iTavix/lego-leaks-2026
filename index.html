@@ -12,7 +12,7 @@
             --bg-body: #F2F2F7; 
             --bg-card: rgba(255, 255, 255, 0.7);
             --bg-card-hover: rgba(255, 255, 255, 0.95);
-            --bg-modal-default: rgba(242, 242, 247, 0.85); 
+            --bg-modal-default: rgba(242, 242, 247, 0.85); /* BASE MODAL LIGHT */
             --input-bg: rgba(118, 118, 128, 0.12);
             --text-primary: #000000;
             --text-secondary: #3C3C43;
@@ -27,7 +27,7 @@
             --shadow-card: 0 4px 20px rgba(0,0,0,0.05);
             
             /* Colori specifici per il logo in Light Mode */
-            --logo-base-fill: rgba(255, 255, 255, 0.4); /* Frosted Glass Light */
+            --logo-base-fill: rgba(255, 255, 255, 0.4); 
             --logo-stud-color: #007AFF;
             --logo-radar-color: #007AFF;
             --logo-border: rgba(0, 0, 0, 0.1);
@@ -39,7 +39,7 @@
                 --bg-body: #000000;
                 --bg-card: rgba(28, 28, 30, 0.65);
                 --bg-card-hover: rgba(44, 44, 46, 0.85);
-                --bg-modal-default: rgba(28, 28, 30, 0.6); 
+                --bg-modal-default: rgba(28, 28, 30, 0.6); /* BASE MODAL DARK (più trasparente) */
                 --input-bg: rgba(118, 118, 128, 0.24);
                 --text-primary: #F5F5F7;
                 --text-secondary: #86868B;
@@ -53,7 +53,7 @@
                 --shadow-card: 0 10px 30px rgba(0,0,0,0.3);
                 
                 /* Colori specifici per il logo in Dark Mode */
-                --logo-base-fill: rgba(255, 255, 255, 0.05); /* Frosted Glass Dark */
+                --logo-base-fill: rgba(255, 255, 255, 0.05); 
                 --logo-stud-color: #0A84FF;
                 --logo-radar-color: #0A84FF;
                 --logo-border: rgba(255, 255, 255, 0.1);
@@ -77,11 +77,10 @@
         /* Logo SVG Styling */
         .main-logo { 
             height: 60px; width: 60px; 
-            /* Bagliore dinamico basato sul colore d'accento */
             filter: drop-shadow(0 0 10px var(--logo-radar-color)); 
             transition: transform 0.3s ease;
         }
-        .main-logo:hover { transform: scale(1.05) rotate(0deg); } /* Removed rotation */
+        .main-logo:hover { transform: scale(1.05) rotate(0deg); }
 
         /* Radar Animation */
         @keyframes radar-sweep {
@@ -105,7 +104,7 @@
         .radar-icon { width: 24px; height: 24px; fill: var(--accent); opacity: 0.9; animation: radar-spin 8s linear infinite; }
         @keyframes radar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* CONTROLS (Resto del codice CSS invariato per brevità...) */
+        /* CONTROLS */
         .controls-row { max-width: 700px; margin: 0 auto 40px auto; display: flex; gap: 15px; align-items: center; }
         .search-wrapper { flex-grow: 1; position: relative; }
         .search-input { width: 100%; padding: 12px 20px 12px 45px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary); font-size: 1rem; backdrop-filter: blur(10px); transition: all 0.3s ease; box-sizing: border-box; font-family: inherit; }
@@ -184,9 +183,15 @@
         .modal-meta-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .meta-badge { font-size: 0.85rem; font-weight: 500; padding: 6px 12px; border-radius: 8px; background: var(--input-bg); color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
         .meta-badge.price-badge { background: var(--accent); color: #fff; font-weight: 600; }
-        .modal-body { font-size: 1.05rem; line-height: 1.7; color: var(--text-primary); }
+        
+        /* TESTO MODAL FIX: SEMPRE BIANCO */
+        .modal-body { 
+            font-size: 1.05rem; line-height: 1.7; 
+            color: #fff; /* FORZA BIANCO */
+            /* Selettore più specifico per evitare che il colore del tema Light Mode sovrascriva */
+        }
         .news-section-title { color: var(--accent); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; font-weight: 700; margin-top: 25px; margin-bottom: 8px; opacity: 0.9; }
-        .modal-body strong { color: var(--text-primary); font-weight: 600; }
+        .modal-body strong { color: var(--accent); font-weight: 600; } /* GRASSETTO: USA ACCENT */
         .modal-body ul { padding-left: 20px; margin: 10px 0; }
         .modal-body li { margin-bottom: 5px; }
 
