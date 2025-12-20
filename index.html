@@ -12,7 +12,7 @@
             --bg-body: #F2F2F7; 
             --bg-card: rgba(255, 255, 255, 0.7);
             --bg-card-hover: rgba(255, 255, 255, 0.95);
-            --bg-modal-default: rgba(242, 242, 247, 0.85); /* BASE MODAL LIGHT */
+            --bg-modal-default: rgba(242, 242, 247, 0.85); 
             --input-bg: rgba(118, 118, 128, 0.12);
             --text-primary: #000000;
             --text-secondary: #3C3C43;
@@ -39,7 +39,7 @@
                 --bg-body: #000000;
                 --bg-card: rgba(28, 28, 30, 0.65);
                 --bg-card-hover: rgba(44, 44, 46, 0.85);
-                --bg-modal-default: rgba(28, 28, 30, 0.6); /* BASE MODAL DARK (più trasparente) */
+                --bg-modal-default: rgba(28, 28, 30, 0.6); 
                 --input-bg: rgba(118, 118, 128, 0.24);
                 --text-primary: #F5F5F7;
                 --text-secondary: #86868B;
@@ -164,7 +164,7 @@
         .mac-red:active, .mac-yellow:active, .mac-green:active { transform: scale(0.9); }
 
         /* FAB & LOADER */
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--bg-card); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--accent); box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 300; transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); z-index: 900; }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; border-radius: 50%; /* Target Touch size */ background: var(--bg-card); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border); color: var(--accent); box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 300; transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); z-index: 900; }
         .fab:hover { background: var(--accent); color: white; transform: scale(1.05) rotate(90deg); border-color: transparent; }
         
         #db-status { position: fixed; bottom: 30px; left: 30px; color: var(--text-secondary); font-size: 0.8rem; display: flex; align-items: center; gap: 8px; z-index: 1000; }
@@ -187,11 +187,10 @@
         /* TESTO MODAL FIX: SEMPRE BIANCO */
         .modal-body { 
             font-size: 1.05rem; line-height: 1.7; 
-            color: #fff; /* FORZA BIANCO */
-            /* Selettore più specifico per evitare che il colore del tema Light Mode sovrascriva */
+            color: #fff; /* FORZA BIANCO per leggibilità */
         }
         .news-section-title { color: var(--accent); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; font-weight: 700; margin-top: 25px; margin-bottom: 8px; opacity: 0.9; }
-        .modal-body strong { color: var(--accent); font-weight: 600; } /* GRASSETTO: USA ACCENT */
+        .modal-body strong { color: var(--accent); font-weight: 600; } 
         .modal-body ul { padding-left: 20px; margin: 10px 0; }
         .modal-body li { margin-bottom: 5px; }
 
@@ -209,22 +208,22 @@
 
         /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 768px) {
-            body { padding: 20px 15px 100px 15px; }
+            body { padding: 20px 15px 100px 15px; } /* Padding ridotto */
             h1 { font-size: 2.2rem; }
             .subtitle { font-size: 0.9rem; }
             
             .controls-row { flex-direction: column; gap: 10px; margin-bottom: 25px; }
             .search-wrapper, .sort-select { width: 100%; }
-            .grid { grid-template-columns: 1fr; gap: 15px; }
+            .grid { grid-template-columns: 1fr; gap: 15px; } /* Una colonna singola */
             
             .card { padding: 20px; padding-top: 40px; min-height: auto; }
             .card h2 { font-size: 1.25rem; }
             
-            .modal { width: 95%; padding: 25px; max-height: 90vh; }
+            .modal { width: 95%; padding: 25px; max-height: 90vh; } /* Padding modale ottimizzato */
             .modal-title { font-size: 1.6rem; }
             .modal-body { font-size: 1rem; }
             
-            .fab { width: 56px; height: 56px; bottom: 20px; right: 20px; font-size: 2rem; }
+            .fab { width: 56px; height: 56px; bottom: 20px; right: 20px; font-size: 2rem; } /* Target touch più grande */
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -413,7 +412,8 @@
         const SUPABASE_URL = 'https://uquhnaypjozrapjbbwtk.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxdWhuYXlwam96cmFwamJid3RrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3MzIwNDgsImV4cCI6MjA4MTMwODA0OH0.lyM2PlAiTsuC_wgzP543J8N9hp83mQw4JxnR9fMnETI';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // CORREZIONE: Rinominato per evitare conflitto con window.supabase
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let leaks = [];
         let currentFilter = 'all';
@@ -448,7 +448,8 @@
         // FETCH (READ)
         async function fetchLeaks() {
             showLoading('Fetching leaks...');
-            const { data, error } = await supabase.from('leaks').select('*');
+            // CORREZIONE: uso supabaseClient
+            const { data, error } = await supabaseClient.from('leaks').select('*');
             if (error) {
                 console.error('Error fetching leaks:', error);
                 statusText.innerText = 'Error fetching data';
@@ -472,7 +473,8 @@
         // CREATE
         async function createLeak(newLeak) {
             showLoading('Saving...');
-            const { error } = await supabase.from('leaks').insert([{
+            // CORREZIONE: uso supabaseClient
+            const { error } = await supabaseClient.from('leaks').insert([{
                 theme: newLeak.theme,
                 name: newLeak.name,
                 price: newLeak.price,
@@ -489,7 +491,8 @@
         // UPDATE
         async function updateLeak(id, updatedData) {
             showLoading('Updating...');
-            const { error } = await supabase.from('leaks').update({
+            // CORREZIONE: uso supabaseClient
+            const { error } = await supabaseClient.from('leaks').update({
                 theme: updatedData.theme,
                 name: updatedData.name,
                 price: updatedData.price,
@@ -508,7 +511,8 @@
             event.stopPropagation();
             if(confirm("Sei sicuro di voler eliminare questo Leak dal Cloud?")) {
                 showLoading('Deleting...');
-                const { error } = await supabase.from('leaks').delete().eq('id', id);
+                // CORREZIONE: uso supabaseClient
+                const { error } = await supabaseClient.from('leaks').delete().eq('id', id);
                 if(error) alert("Error deleting: " + error.message);
                 else await fetchLeaks();
             }
